@@ -163,6 +163,21 @@ class OrderApiController extends Controller
 
         return response()->json($order->load('payments'));
     }
+// GET /api/orders/{orderId}/items
+public function getOrderItems($orderId)
+{
+    $order = Order::with('items.product:id,name')->findOrFail($orderId);
+
+    return response()->json([
+        'items' => $order->items->map(function ($item) {
+            return [
+                'product_id' => $item->product_id,
+                'product_name' => $item->product->name ?? '',
+                'quantity' => $item->quantity,
+            ];
+        }),
+    ]);
+}
 
     /* ─────────────────────── changeStatus ─────────────────────────── */
     public function changeStatus(Request $req, $id)

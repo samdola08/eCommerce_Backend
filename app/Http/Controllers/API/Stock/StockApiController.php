@@ -13,12 +13,20 @@ class StockApiController extends Controller
 {
     public function index()
     {
-        $stocks = Stock::with([
-            'product:id,name,img',
-            'warehouse:id,name'
-        ])->latest()->get();
+        try {
+            $stocks = Stock::with([
+                'product:id,name,img',
+                'warehouse:id,name'
+            ])->latest()->get();
 
-        return response()->json($stocks);
+            return response()->json($stocks);
+        } catch (\Exception $e) {
+            // Return error message as JSON so your frontend can read it
+            return response()->json([
+                'error' => 'Server Error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function store(Request $request)
@@ -59,12 +67,27 @@ class StockApiController extends Controller
             'delivery_person'  => $request->delivery_person,
             'delivery_company' => $request->delivery_company ?? 'N/A',
             'delivery_note'    => $request->delivery_note ?? '',
-            'delivery_status'  => $request->delivery_status,
+            'delivery_status'  => $request->delivery_status ?? 'pending',
             'delivery_date'    => now(),
         ];
 
         $items = $request->items;
 
+        // Check stock availability manually for each item
+        foreach ($items as $item) {
+            $availableStock = Stock::where('product_id', $item['product_id'])
+                ->where('warehouse_id', $deliveryData['warehouse_id'])
+                ->selectRaw('COALESCE(SUM(quantity_in), 0) - COALESCE(SUM(quantity_out), 0) as current_stock')
+                ->value('current_stock');
+
+            if ($availableStock < $item['quantity']) {
+                return response()->json([
+                    'error' => "Not enough stock for product #{$item['product_id']}. Available: {$availableStock}, Requested: {$item['quantity']}"
+                ], 422);
+            }
+        }
+
+        // Proceed inside transaction if stock is enough
         $delivery = DB::transaction(function () use ($deliveryData, $items) {
             $delivery = OrderDelivery::create($deliveryData);
 
@@ -94,5 +117,16 @@ class StockApiController extends Controller
             'message' => 'Delivery created & stock updated successfully.',
             'data'    => $delivery->load('items'),
         ], 201);
+    }
+
+    public function stockSummary()
+    {
+        $stockSummary = DB::table('stocks')
+            ->select('product_id', 'warehouse_id')
+            ->selectRaw('SUM(quantity_in) - SUM(quantity_out) AS total_stock')
+            ->groupBy('product_id', 'warehouse_id')
+            ->get();
+
+        return response()->json($stockSummary);
     }
 }

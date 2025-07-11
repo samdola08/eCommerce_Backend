@@ -3,6 +3,8 @@
 namespace App\Models\Order;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Inventory\Product;
+
 
 class OrderItem extends Model
 {
@@ -16,4 +18,9 @@ class OrderItem extends Model
         'tax',
         'subtotal',
     ];
+
+     public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

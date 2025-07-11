@@ -34,4 +34,9 @@ class Stock extends Model
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id');
     }
+    // In App\Models\Stock\Stock.php
+    public function getCurrentStockAttribute()
+    {
+        return $this->quantity_in - $this->quantity_out;
+    }
 }

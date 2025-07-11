@@ -9,22 +9,23 @@ use App\Models\Order\Order;
 
 class OrderDelivery extends Model
 {
-    protected $table ='order_deliveries';
-    
+    protected $table = 'order_deliveries';
+
     protected $fillable = [
         'order_id',
         'warehouse_id',
         'delivery_person',
         'delivery_company',
         'delivery_note',
-        'delivery_data',
+        'delivery_date',     // <-- typo here, should be delivery_date
         'delivery_status',
     ];
 
     protected $casts = [
-        'delivery_data' => 'datetime',
+        'delivery_date' => 'datetime',  // <-- typo here too
     ];
-        public function items()
+
+    public function items()
     {
         return $this->hasMany(OrderDeliveryItem::class, 'delivery_id');
     }
@@ -34,8 +35,7 @@ class OrderDelivery extends Model
         return $this->belongsTo(Warehouse::class);
     }
     public function order()
-{
-    return $this->belongsTo(\App\Models\Order\Order::class);
-}
-
+    {
+        return $this->belongsTo(\App\Models\Order\Order::class);
+    }
 }

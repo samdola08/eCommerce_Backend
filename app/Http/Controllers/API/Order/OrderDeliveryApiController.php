@@ -24,7 +24,7 @@ class OrderDeliveryApiController extends Controller
     public function store(Request $request, $orderId)
     {
         $delivery = DB::transaction(function () use ($request, $orderId) {
-            // 1. Save delivery
+            // Create the delivery record
             $delivery = OrderDelivery::create([
                 'order_id'         => $orderId,
                 'warehouse_id'     => $request->warehouse_id,
@@ -35,25 +35,41 @@ class OrderDeliveryApiController extends Controller
                 'delivery_date'    => $request->delivery_date ?? now()->toDateString(),
             ]);
 
-            // 2. Get ordered items
-            $orderItems = OrderItem::where('order_id', $orderId)->get();
+            $items = $request->items ?? [];
 
-            foreach ($orderItems as $item) {
-                // 3. Create delivery item
+            foreach ($items as $item) {
+                if (empty($item['product_id']) || empty($item['quantity'])) {
+                    continue;
+                }
+
+                $currentStock = Stock::where('product_id', $item['product_id'])
+                    ->where('warehouse_id', $request->warehouse_id)
+                    ->selectRaw('COALESCE(SUM(quantity_in),0) - COALESCE(SUM(quantity_out),0) AS total_stock')
+                    ->value('total_stock');
+
+                if ($currentStock === null) {
+                    $currentStock = 0;
+                }
+
+                if ($item['quantity'] > $currentStock) {
+                    throw new \Exception("Not enough stock for product #{$item['product_id']}. Available: $currentStock, Requested: {$item['quantity']}");
+                }
+
+                // ডেলিভারি আইটেম তৈরি করুন
                 OrderDeliveryItem::create([
                     'delivery_id' => $delivery->id,
-                    'product_id'  => $item->product_id,
-                    'quantity'    => $item->quantity,
+                    'product_id'  => $item['product_id'],
+                    'quantity'    => $item['quantity'],
                 ]);
 
-                // 4. Decrease stock
+                // স্টক রেকর্ড তৈরি করুন (quantity_out বাড়বে)
                 Stock::create([
-                    'product_id'   => $item->product_id,
+                    'product_id'   => $item['product_id'],
                     'warehouse_id' => $delivery->warehouse_id,
                     'type'         => 'sale',
                     'reference_id' => $orderId,
                     'quantity_in'  => 0,
-                    'quantity_out' => $item->quantity,
+                    'quantity_out' => $item['quantity'],
                     'stock_date'   => now(),
                     'note'         => 'Auto stock decrease from delivery',
                 ]);
@@ -64,9 +80,11 @@ class OrderDeliveryApiController extends Controller
 
         return response()->json([
             'message' => 'Delivery saved and stock updated.',
-            'data' => $delivery->load('items')
+            'data' => $delivery->load('items'),
         ]);
     }
+
+
 
     public function show($orderId)
     {
@@ -76,5 +94,18 @@ class OrderDeliveryApiController extends Controller
         }
 
         return response()->json($delivery);
+    }
+    public function updateStatus(Request $request, $id)
+    {
+        $delivery = OrderDelivery::findOrFail($id);
+
+        $validated = $request->validate([
+            'delivery_status' => 'required|string|in:pending,in_transit,delivered,cancelled',
+        ]);
+
+        $delivery->delivery_status = $validated['delivery_status'];
+        $delivery->save();
+
+        return response()->json(['message' => 'Status updated', 'delivery' => $delivery], 200);
     }
 }

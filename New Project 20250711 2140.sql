@@ -88,16 +88,18 @@ CREATE TABLE `ecom_customers` (
   `status` enum('active','inactive') DEFAULT 'active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `phone` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `ecom_customers`
 --
 
 /*!40000 ALTER TABLE `ecom_customers` DISABLE KEYS */;
-INSERT INTO `ecom_customers` (`id`,`name`,`email`,`address`,`status`,`created_at`,`updated_at`) VALUES 
- (1,'Mim','ab@gmail.com','dasd','active','2025-07-04 16:41:41','2025-07-04 16:41:41');
+INSERT INTO `ecom_customers` (`id`,`name`,`email`,`address`,`status`,`created_at`,`updated_at`,`phone`) VALUES 
+ (1,'Mim','ab@gmail.com','dasd','active','2025-07-04 16:41:41','2025-07-04 16:41:41',''),
+ (2,'anmu','samdola81@gmail.com','sdsds','active','2025-07-07 20:30:51','2025-07-07 20:30:51','546546545');
 /*!40000 ALTER TABLE `ecom_customers` ENABLE KEYS */;
 
 
@@ -108,23 +110,57 @@ INSERT INTO `ecom_customers` (`id`,`name`,`email`,`address`,`status`,`created_at
 DROP TABLE IF EXISTS `ecom_order_deliveries`;
 CREATE TABLE `ecom_order_deliveries` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `order_id` varchar(45) NOT NULL,
+  `order_id` int(10) unsigned NOT NULL,
   `delivery_person` varchar(45) NOT NULL,
-  `delivery_company` varchar(45) NOT NULL,
-  `delivery_note` text NOT NULL,
-  `delivery_data` datetime NOT NULL,
+  `delivery_company` varchar(45) DEFAULT NULL,
+  `delivery_note` text DEFAULT NULL,
+  `delivery_date` date DEFAULT NULL,
   `delivery_status` enum('pending','out_for_delivery','delivered','failed') DEFAULT 'pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `warehouse_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `ecom_order_deliveries`
 --
 
 /*!40000 ALTER TABLE `ecom_order_deliveries` DISABLE KEYS */;
+INSERT INTO `ecom_order_deliveries` (`id`,`order_id`,`delivery_person`,`delivery_company`,`delivery_note`,`delivery_date`,`delivery_status`,`created_at`,`updated_at`,`warehouse_id`) VALUES 
+ (1,1,'dgfr','dfdsfdsf','dsf','0000-00-00','pending','2025-07-10 23:01:10','2025-07-10 23:52:59',1),
+ (2,2,'John Doe','FastExpress','No note','2025-07-10','pending','2025-07-10 23:29:26','2025-07-11 01:57:48',1),
+ (3,3,'John Doe','Fast Delivery Ltd.','Handle with care',NULL,'pending','2025-07-10 17:50:21','2025-07-11 01:57:50',1),
+ (4,1,'fd','dfs','dsf',NULL,'pending','2025-07-11 14:54:25','2025-07-11 14:54:25',1),
+ (5,6,'ds','dsf','gfg',NULL,'pending','2025-07-11 14:56:05','2025-07-11 14:56:05',1);
 /*!40000 ALTER TABLE `ecom_order_deliveries` ENABLE KEYS */;
+
+
+--
+-- Definition of table `ecom_order_delivery_items`
+--
+
+DROP TABLE IF EXISTS `ecom_order_delivery_items`;
+CREATE TABLE `ecom_order_delivery_items` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `delivery_id` int(10) unsigned NOT NULL,
+  `product_id` int(10) unsigned NOT NULL,
+  `quantity` varchar(45) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ecom_order_delivery_items`
+--
+
+/*!40000 ALTER TABLE `ecom_order_delivery_items` DISABLE KEYS */;
+INSERT INTO `ecom_order_delivery_items` (`id`,`delivery_id`,`product_id`,`quantity`,`created_at`,`updated_at`) VALUES 
+ (1,3,18,'1','2025-07-10 17:50:21','2025-07-10 17:50:21'),
+ (2,4,18,'1','2025-07-11 14:54:25','2025-07-11 14:54:25'),
+ (3,5,1,'2','2025-07-11 14:56:05','2025-07-11 14:56:05');
+/*!40000 ALTER TABLE `ecom_order_delivery_items` ENABLE KEYS */;
 
 
 --
@@ -141,14 +177,23 @@ CREATE TABLE `ecom_order_items` (
   `discount` varchar(45) NOT NULL,
   `tax` decimal(10,0) NOT NULL,
   `subtotal` decimal(10,0) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `ecom_order_items`
 --
 
 /*!40000 ALTER TABLE `ecom_order_items` DISABLE KEYS */;
+INSERT INTO `ecom_order_items` (`id`,`order_id`,`product_id`,`quantity`,`unit_price`,`discount`,`tax`,`subtotal`,`created_at`,`updated_at`) VALUES 
+ (1,1,18,'1','100','0','0','100','2025-07-10 12:53:23','2025-07-10 12:53:23'),
+ (2,2,18,'1','100','0','0','100','2025-07-10 13:11:21','2025-07-10 13:11:21'),
+ (3,3,18,'1','100','0','0','100','2025-07-10 13:16:41','2025-07-10 13:16:41'),
+ (4,4,17,'1','100','5','10','105','2025-07-10 13:17:29','2025-07-10 13:17:29'),
+ (5,5,17,'10','10','0','0','100','2025-07-10 17:11:05','2025-07-10 17:11:05'),
+ (6,6,1,'2','100','0','0','200','2025-07-11 14:55:33','2025-07-11 14:55:33');
 /*!40000 ALTER TABLE `ecom_order_items` ENABLE KEYS */;
 
 
@@ -169,13 +214,21 @@ CREATE TABLE `ecom_order_payments` (
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`),
   CONSTRAINT `ecom_order_payments_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `ecom_orders` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `ecom_order_payments`
 --
 
 /*!40000 ALTER TABLE `ecom_order_payments` DISABLE KEYS */;
+INSERT INTO `ecom_order_payments` (`id`,`order_id`,`payment_date`,`amount`,`method`,`note`,`created_at`,`updated_at`) VALUES 
+ (1,1,'2025-07-10 00:00:00','100.00','cash',NULL,'2025-07-10 12:53:23','2025-07-10 12:53:23'),
+ (2,2,'2025-07-10 00:00:00','105.00','cash',NULL,'2025-07-10 13:11:21','2025-07-10 13:11:21'),
+ (3,3,'2025-07-10 00:00:00','105.00','cash',NULL,'2025-07-10 13:16:41','2025-07-10 13:16:41'),
+ (4,4,'2025-07-10 00:00:00','125.00','cash',NULL,'2025-07-10 13:17:29','2025-07-10 13:17:29'),
+ (5,5,'2025-07-10 00:00:00','100.00','cash',NULL,'2025-07-10 17:11:05','2025-07-10 17:11:05'),
+ (6,6,'2025-07-11 00:00:00','200.00','cash',NULL,'2025-07-11 14:55:33','2025-07-11 14:55:33'),
+ (7,6,'2025-07-11 00:00:00','0.00','cash',NULL,'2025-07-11 14:55:33','2025-07-11 14:55:33');
 /*!40000 ALTER TABLE `ecom_order_payments` ENABLE KEYS */;
 
 
@@ -206,27 +259,36 @@ CREATE TABLE `ecom_order_shipments` (
 
 
 --
--- Definition of table `ecom_order_status_history`
+-- Definition of table `ecom_order_status_histories`
 --
 
-DROP TABLE IF EXISTS `ecom_order_status_history`;
-CREATE TABLE `ecom_order_status_history` (
+DROP TABLE IF EXISTS `ecom_order_status_histories`;
+CREATE TABLE `ecom_order_status_histories` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` int(10) unsigned NOT NULL,
   `old_status` enum('pending','confirmed','processing','shipped','delivered','cancelled','returned') DEFAULT NULL,
   `new_status` enum('pending','confirmed','processing','shipped','delivered','cancelled','returned') NOT NULL,
   `changed_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`),
-  CONSTRAINT `ecom_order_status_history_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `ecom_orders` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  CONSTRAINT `ecom_order_status_histories_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `ecom_orders` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `ecom_order_status_history`
+-- Dumping data for table `ecom_order_status_histories`
 --
 
-/*!40000 ALTER TABLE `ecom_order_status_history` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ecom_order_status_history` ENABLE KEYS */;
+/*!40000 ALTER TABLE `ecom_order_status_histories` DISABLE KEYS */;
+INSERT INTO `ecom_order_status_histories` (`id`,`order_id`,`old_status`,`new_status`,`changed_at`,`created_at`,`updated_at`) VALUES 
+ (1,1,NULL,'pending','2025-07-10 18:53:23','2025-07-10 12:53:23','2025-07-10 12:53:23'),
+ (2,2,NULL,'pending','2025-07-10 19:11:21','2025-07-10 13:11:21','2025-07-10 13:11:21'),
+ (3,3,NULL,'pending','2025-07-10 19:16:41','2025-07-10 13:16:41','2025-07-10 13:16:41'),
+ (4,4,NULL,'pending','2025-07-10 19:17:29','2025-07-10 13:17:29','2025-07-10 13:17:29'),
+ (5,5,NULL,'pending','2025-07-10 23:11:05','2025-07-10 17:11:05','2025-07-10 17:11:05'),
+ (6,6,NULL,'pending','2025-07-11 20:55:33','2025-07-11 14:55:33','2025-07-11 14:55:33');
+/*!40000 ALTER TABLE `ecom_order_status_histories` ENABLE KEYS */;
 
 
 --
@@ -254,13 +316,20 @@ CREATE TABLE `ecom_orders` (
   UNIQUE KEY `order_no` (`order_no`),
   KEY `customer_id` (`customer_id`),
   CONSTRAINT `ecom_orders_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `ecom_customers` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `ecom_orders`
 --
 
 /*!40000 ALTER TABLE `ecom_orders` DISABLE KEYS */;
+INSERT INTO `ecom_orders` (`id`,`customer_id`,`order_no`,`order_date`,`delivery_date`,`status`,`payment_status`,`total_amount`,`paid_amount`,`due_amount`,`shipping_address`,`discount_amount`,`vat_amount`,`created_at`,`updated_at`) VALUES 
+ (1,1,'ORD-250710125323701','2025-07-10 00:00:00','2025-07-10 00:00:00','pending','paid','100.00','100.00','0.00','dfdfd','0.00','0.00','2025-07-10 12:53:23','2025-07-10 12:53:23'),
+ (2,1,'ORD-250710131120206','2025-07-10 00:00:00','2025-07-10 00:00:00','pending','partial','105.00','105.00','-5.00','dfdfdf','0.00','5.00','2025-07-10 13:11:21','2025-07-10 13:11:21'),
+ (3,1,'ORD-250710131641794','2025-07-10 00:00:00','2025-07-10 00:00:00','pending','paid','105.00','105.00','0.00','fdf','0.00','5.00','2025-07-10 13:16:41','2025-07-10 13:16:41'),
+ (4,1,'ORD-250710131729741','2025-07-10 00:00:00','2025-07-10 00:00:00','pending','paid','125.00','125.00','0.00','rfsd','0.00','20.00','2025-07-10 13:17:29','2025-07-10 13:17:29'),
+ (5,1,'ORD-250710171105413','2025-07-10 00:00:00','2025-07-10 00:00:00','pending','paid','100.00','100.00','0.00','sfdf','0.00','0.00','2025-07-10 17:11:05','2025-07-10 17:11:05'),
+ (6,1,'ORD-250711145533465','2025-07-11 00:00:00','2025-07-11 00:00:00','pending','paid','200.00','200.00','0.00','abc','0.00','0.00','2025-07-11 14:55:33','2025-07-11 14:55:33');
 /*!40000 ALTER TABLE `ecom_orders` ENABLE KEYS */;
 
 
@@ -358,7 +427,7 @@ CREATE TABLE `ecom_purchase_items` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `unit_cost` decimal(10,0) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `ecom_purchase_items`
@@ -367,7 +436,10 @@ CREATE TABLE `ecom_purchase_items` (
 /*!40000 ALTER TABLE `ecom_purchase_items` DISABLE KEYS */;
 INSERT INTO `ecom_purchase_items` (`id`,`purchase_id`,`product_id`,`quantity`,`discount`,`tax_percent`,`tax_amount`,`subtotal`,`created_at`,`updated_at`,`unit_cost`) VALUES 
  (2,1,17,10,'1','1','10','1009','2025-07-05 22:17:23','2025-07-05 22:17:23','100'),
- (3,2,18,2,'0','0','0','196','2025-07-05 22:22:03','2025-07-05 22:22:03','98');
+ (3,2,18,2,'0','0','0','196','2025-07-05 22:22:03','2025-07-05 22:22:03','98'),
+ (4,3,1,10,'0','0','0','1000','2025-07-10 14:24:59','2025-07-10 14:24:59','100'),
+ (5,4,17,100,'0','0','0','10000','2025-07-10 14:45:55','2025-07-10 14:45:55','100'),
+ (6,5,16,10,'0','0','0','990','2025-07-10 18:22:09','2025-07-10 18:22:09','99');
 /*!40000 ALTER TABLE `ecom_purchase_items` ENABLE KEYS */;
 
 
@@ -388,7 +460,7 @@ CREATE TABLE `ecom_purchase_payments` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `ecom_purchase_payments`
@@ -397,7 +469,9 @@ CREATE TABLE `ecom_purchase_payments` (
 /*!40000 ALTER TABLE `ecom_purchase_payments` DISABLE KEYS */;
 INSERT INTO `ecom_purchase_payments` (`id`,`purchase_id`,`payment_date`,`amount`,`reference_no`,`method`,`currency`,`exchange_rate`,`created_at`,`updated_at`) VALUES 
  (2,1,'2025-07-05 00:00:00','1510','REF-6869a45ff1983','cash','BDT','1.000000','2025-07-05 22:17:23','2025-07-05 22:17:23'),
- (3,2,'2025-07-05 22:22:03','196','REF-6869a58b27522','cash','BDT','1.000000','2025-07-05 22:22:03','2025-07-05 22:22:03');
+ (3,2,'2025-07-05 22:22:03','196','REF-6869a58b27522','cash','BDT','1.000000','2025-07-05 22:22:03','2025-07-05 22:22:03'),
+ (4,3,'2025-07-10 14:24:59','1000','REF-686fcd3b9a2ee','cash','BDT','1.000000','2025-07-10 14:24:59','2025-07-10 14:24:59'),
+ (5,4,'2025-07-10 14:45:55','10000','REF-686fd223eb578','cash','BDT','1.000000','2025-07-10 14:45:55','2025-07-10 14:45:55');
 /*!40000 ALTER TABLE `ecom_purchase_payments` ENABLE KEYS */;
 
 
@@ -429,7 +503,7 @@ CREATE TABLE `ecom_purchases` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `order_tax` decimal(10,0) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `ecom_purchases`
@@ -438,8 +512,46 @@ CREATE TABLE `ecom_purchases` (
 /*!40000 ALTER TABLE `ecom_purchases` DISABLE KEYS */;
 INSERT INTO `ecom_purchases` (`id`,`supplier_id`,`warehouse_id`,`reference`,`purchase_no`,`invoice_number`,`purchase_date`,`note`,`sub_total`,`shipping`,`total_amount`,`paid_amount`,`due_amount`,`payment_status`,`status`,`created_by`,`is_returned`,`is_editable`,`created_at`,`updated_at`,`order_tax`) VALUES 
  (1,1,1,'PUR-1751753768830','PNO-1751753768830','INV-1751753768830','2025-07-05 00:00:00','dfafhfhgh','1009.00','500.00','1510.00','1510.00','0.00','paid','pending',NULL,0,1,'2025-07-05 22:17:03','2025-07-05 22:17:23','1'),
- (2,1,1,'PUR-1751754100886','PNO-1751754100886','INV-1751754100886','2025-07-05 00:00:00','ghgfh','196.00','0.00','196.00','196.00','0.00','paid','pending',NULL,0,1,'2025-07-05 22:22:03','2025-07-05 22:22:03','0');
+ (2,1,1,'PUR-1751754100886','PNO-1751754100886','INV-1751754100886','2025-07-05 00:00:00','ghgfh','196.00','0.00','196.00','196.00','0.00','paid','pending',NULL,0,1,'2025-07-05 22:22:03','2025-07-05 22:22:03','0'),
+ (3,1,1,'PUR-1752157473261','PNO-1752157473261','INV-1752157473261','2025-07-10 00:00:00','fdsf','1000.00','0.00','1000.00','1000.00','0.00','paid','pending',NULL,0,1,'2025-07-10 14:24:59','2025-07-10 14:24:59','0'),
+ (4,1,1,'PUR-1752158718858','PNO-1752158718858','INV-1752158718858','2025-07-10 00:00:00','dfdsf','10000.00','0.00','10000.00','10000.00','0.00','paid','pending',NULL,0,1,'2025-07-10 14:45:55','2025-07-10 14:45:55','0'),
+ (5,1,1,'PUR-1752171702842','PNO-1752171702842','INV-1752171702842','2025-07-10 00:00:00','dfgg','990.00','0.00','1080.00','0.00','1080.00','due','pending',NULL,0,1,'2025-07-10 18:22:09','2025-07-10 18:22:09','90');
 /*!40000 ALTER TABLE `ecom_purchases` ENABLE KEYS */;
+
+
+--
+-- Definition of table `ecom_stocks`
+--
+
+DROP TABLE IF EXISTS `ecom_stocks`;
+CREATE TABLE `ecom_stocks` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `warehouse_id` int(10) unsigned NOT NULL,
+  `product_id` int(10) unsigned NOT NULL,
+  `type` enum('purchase','sale','return','adjustment','transfer_in','transfer_out') NOT NULL,
+  `reference_id` int(10) unsigned DEFAULT NULL COMMENT 'purchase_id, order_id etc.',
+  `quantity_in` int(10) unsigned DEFAULT 0,
+  `quantity_out` int(10) unsigned DEFAULT 0,
+  `stock_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `note` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ecom_stocks`
+--
+
+/*!40000 ALTER TABLE `ecom_stocks` DISABLE KEYS */;
+INSERT INTO `ecom_stocks` (`id`,`warehouse_id`,`product_id`,`type`,`reference_id`,`quantity_in`,`quantity_out`,`stock_date`,`note`,`created_at`,`updated_at`) VALUES 
+ (1,1,1,'purchase',3,10,0,'2025-07-10 00:00:00','Purchase Entry','2025-07-10 14:24:59','2025-07-10 14:24:59'),
+ (2,1,17,'purchase',4,100,0,'2025-07-10 00:00:00','Purchase Entry','2025-07-10 14:45:55','2025-07-10 14:45:55'),
+ (3,1,18,'sale',1,0,1,'2025-07-10 17:50:21','Auto stock decrease from delivery','2025-07-10 17:50:21','2025-07-10 17:50:21'),
+ (4,1,16,'purchase',5,10,0,'2025-07-10 00:00:00','Purchase Entry','2025-07-10 18:22:09','2025-07-10 18:22:09'),
+ (5,1,18,'sale',1,0,1,'2025-07-11 14:54:25','Auto stock decrease from delivery','2025-07-11 14:54:25','2025-07-11 14:54:25'),
+ (6,1,1,'sale',6,0,2,'2025-07-11 14:56:05','Auto stock decrease from delivery','2025-07-11 14:56:05','2025-07-11 14:56:05');
+/*!40000 ALTER TABLE `ecom_stocks` ENABLE KEYS */;
 
 
 --
