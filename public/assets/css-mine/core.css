@@ -1,0 +1,261 @@
+/* === Root & Theme Colors === */
+:root {
+    --color-bg: #f1f5f9;
+    --color-white: #ffffff;
+    --color-text: #334155;
+    --color-heading: #1e293b;
+    --color-muted: #64748b;
+    --color-border: #e2e8f0;
+    --color-shadow: rgba(0, 0, 0, 0.05);
+
+    --color-primary: #3b82f6;
+    --color-primary-dark: #2563eb;
+    --color-success: #10b981;
+    --color-danger: #ef4444;
+    
+}
+
+/* === Global Styles === */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-bg);
+    margin: 0;
+    color: var(--color-text);
+    line-height: 1.7;
+}
+
+.container {
+    max-width: 1140px;
+    margin: 40px auto;
+    padding: 30px;
+    background: var(--color-white);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px var(--color-shadow);
+    transition: all 0.3s ease;
+}
+
+/* === Typography === */
+h1, h2, h3 {
+    margin-bottom: 20px;
+    color: var(--color-heading);
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+/* === Table === */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 15px;
+    box-shadow: 0 4px 12px var(--color-shadow);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+th {
+    background-color: #192a56;
+    color: #ffffff;
+    text-align: left;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+
+tbody tr:nth-child(even) {
+    background-color: #f9fbfd;
+}
+
+tbody tr:hover {
+    background-color: #e0ecff;
+    transition: 0.3s;
+}
+
+/* === Form Controls === */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--color-heading);
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background-color: #fff;
+    transition: border 0.3s;
+    box-shadow: 0 1px 3px var(--color-shadow);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* === Buttons === */
+.btnEdit {
+    display: inline-block;
+    /* padding: 30px 20px; */
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+     color: #d1fae5;
+}
+.btnEdit img{
+    width: 20px;
+    height: 20px;
+    background: #7f8fa6;
+    padding: 8px 3px;
+   
+}
+
+.btnDel {
+    display: inline-block;
+    /* padding: 30px 20px; */
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+     color: #d1fae5;
+}
+.btnDel img{
+    width: 20px;
+    height: 20px;
+    background: #40739e;
+    padding: 8px 3px;
+   
+}
+
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.btn-success {
+    background-color: var(--color-success);
+    color: var(--color-white);
+}
+
+.btn-success:hover {
+    background-color: #059669;
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: var(--color-white);
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+/* === Alerts === */
+.alert {
+    padding: 14px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+
+.alert-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.alert-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* === Responsive Table === */
+@media (max-width: 768px) {
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tr {
+        background: var(--color-white);
+        margin-bottom: 16px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px var(--color-shadow);
+        padding: 12px;
+    }
+
+    td {
+        position: relative;
+        padding-left: 50%;
+        border: none;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    td::before {
+        position: absolute;
+        top: 12px;
+        left: 16px;
+        font-weight: bold;
+        color: var(--color-muted);
+        content: attr(data-label);
+        width: 40%;
+        white-space: nowrap;
+    }
+}
+
+/* === Mobile Form & Buttons === */
+@media (max-width: 480px) {
+    input, select, textarea {
+        font-size: 16px;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+}
+
+i {
+  display: none;
+}
